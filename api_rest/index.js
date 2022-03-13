@@ -12,8 +12,9 @@ mongoose.connect('mongodb://localhost:27017/fixme');
 let app = express();
 
 app.use(express.json());
+app.use(express.urlencoded());
 
 app.use('/productos', productRouter);
 app.use('/usuarios', userRouter);
 
-app.listen(8080);
+app.listen(3000);

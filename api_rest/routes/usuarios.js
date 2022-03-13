@@ -27,6 +27,47 @@ let generarToken = nick => {
 
 //GET
 
+/** Todos los usuarios */
+router.get('/', (request, response) =>{
+    Usuario.find().then( resultado => {
+
+        if(resultado.length > 0){
+            response.status(200).send({ok:true, usuarios:resultado});
+        }else{
+            response.status(400).send({ok:false, error:'No se han encontrado usuarios.'});
+        }
+    }).catch(error =>{
+        response.status(500).send({ok:false, error:'Error de servidor 500'})
+    })
+});
+
+/** Usuario por id */
+router.get('/:id', (request, response) =>{
+    Usuario.findById(request.params.id).then(resultado =>{
+        if(resultado){
+            response.status(200).send({ok:true, usuario:resultado});
+        }else{
+            response.status(400).send({ok:false, error:'No se ha encontrado el usuario.'});
+        }
+    }).catch(error =>{
+        response.status(500).send({ok:false, error:'Error de servidor 500.'})
+    })
+});
+
+/** Usuario por nick */
+router.get('/nick/:nick', (request, response) =>{
+    Usuario.find({nick:request.params.nick}).then(resultado =>{
+        if(resultado.length > 0){
+            response.status(200).send({ok:true, usuario:resultado});
+        }else{
+            response.status(400).send({ok:false, error:'No se ha encontrado el usuario.'});
+        }
+    }).catch(error =>{
+        response.status(500).send({ok:false, error:'Error de servidor 500.'})
+    })
+})
+
+
 //POST
 
 router.post('/login', (request, response) =>{
@@ -40,7 +81,7 @@ router.post('/login', (request, response) =>{
             response.status(401).send({ok: false, error:'Usuario incorrecto.'});
         }
     }).catch(error =>{
-        response.status(500).send({ok: false, error:'Error 500'});
+        response.status(500).send({ok: false, error:'Error de servidor 500'});
     })
 });
 
@@ -48,6 +89,7 @@ router.post('/registro', upload.single('avatar'), (request, response) =>{
     let usuario = new Usuario({
         nombre:request.body.nombre,
         nick:request.body.nick,
+        email:request.body.email,
         password: sha256(request.body.password),
         fechaNacimiento:request.body.fechaNacimiento,
         lat:request.body.lat,
@@ -64,5 +106,17 @@ router.post('/registro', upload.single('avatar'), (request, response) =>{
 //PUT
 
 //DELETE
+router.delete('/:id', (request, response) =>{
+    Usuario.findByIdAndRemove(request.params.id).then(result =>{
+        if(result){
+            response.status(200).send({ok:true, usuario:result});
+        }
+        else{
+            response.status(400).send({ok:false, error:'No se ha podido eliminar el usuario.'})
+        }
+    }).catch(error =>{
+        response.status(500).send({ok:false, error:'INTERNAL SERVER ERROR. 500'});
+    })
+});
 
 module.exports = router;

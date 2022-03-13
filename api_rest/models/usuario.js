@@ -12,10 +12,19 @@ let userSchema = new mongoose.Schema({
         minlength:2,
         unique:true
     },
+    email:{
+        required:true,
+        type:String,
+        unique:true
+    },
     password:{
         required:true,
         type:String,
         minlength:8
+    },
+    telefono:{
+        required:false,
+        type:String
     },
     fechaNacimiento:{
         required:true,
@@ -39,6 +48,11 @@ let userSchema = new mongoose.Schema({
         type:String,
         enum:['admin','user'],
         default:'user'
+    },
+    valoracion:{
+        required:false,
+        type:Number,
+        default:0
     }
 });
 
