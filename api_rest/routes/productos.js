@@ -79,6 +79,58 @@ router.post('/', upload.array('imagen', 5), (request, response) =>{
 })
 
 //PUT
+/** Modificar por id, usuario normal */
+router.put('/:id', upload.array('imagen', 5), (request, response) =>{
+
+    Producto.findByIdAndUpdate(request.params.id, {$set: {
+        nombre:request.body.nombre,
+        precio:request.body.precio,
+        descripcion:request.body.descripcion,
+        categoria:request.body.categoria,
+        imagen:request.file?.filename
+        }}, {new:true})
+    .populate('usuario').then(result =>{
+        
+        if(result)
+        {
+            response.status(200).send({ok:true, producto:result});
+        }
+        else
+        {
+            response.status(400).send({ok:false, error: 'Error actualizando el producto.'});
+        }
+    }).catch(error =>{
+        response.status(500).send({ok:false, error: 'INTERNAL SERVER ERROR. 500'});
+    });
+})
+
+/** Modificar por id, usuario ADMINISTRADOR */
+router.put('/admin/:id', upload.array('imagen', 5), (request, response) =>{
+
+    Producto.findByIdAndUpdate(request.params.id, {$set: {
+        nombre:request.body.nombre,
+        precio:request.body.precio,
+        descripcion:request.body.descripcion,
+        usuario:request.body.usuario,
+        categoria:request.body.categoria,
+        likes:request.body.likes,
+        vistas:request.body.vistas,
+        imagen:request.file?.filename
+        }}, {new:true})
+    .populate('usuario').then(result =>{
+        
+        if(result)
+        {
+            response.status(200).send({ok:true, producto:result});
+        }
+        else
+        {
+            response.status(400).send({ok:false, error: 'Error actualizando el producto.'});
+        }
+    }).catch(error =>{
+        response.status(500).send({ok:false, error: 'INTERNAL SERVER ERROR. 500'});
+    });
+})
 
 //DELETE
 router.delete('/:id', (request, response) =>{

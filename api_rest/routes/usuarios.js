@@ -103,7 +103,69 @@ router.post('/registro', upload.single('avatar'), (request, response) =>{
         response.status(500).send({ok:false, error:'No se ha podido registrar al usuario.'});
     })
 })
+
 //PUT
+/** Modificar por id, usuario NORMAL */
+router.put('/:id', upload.single('avatar'), (request, response) =>{
+
+    Usuario.findByIdAndUpdate(request.params.id, {$set: {
+        nombre:request.body.nombre,
+        nick:request.body.nick,
+        password:request.body.password,
+        email:request.body.email,
+        telefono:request.body.telefono,
+        fechaNacimiento:request.body.fechaNacimiento,
+        avatar:request.file?.filename,
+        lat:request.body.lat,
+        lng:request.body.lng,
+        direccion:request.body.direccion
+        }}, {new:true})
+    .then(result =>{
+        
+        if(result)
+        {
+            response.status(200).send({ok:true, usuario:result});
+        }
+        else
+        {
+            response.status(400).send({ok:false, error: 'Error actualizando el usuario.'});
+        }
+    }).catch(error =>{
+        response.status(500).send({ok:false, error: 'INTERNAL SERVER ERROR. 500'});
+    });
+})
+
+/** Modificar por id, usuario ADMINISTRADOR */
+router.put('/admin/:id', upload.single('avatar'), (request, response) =>{
+
+    Usuario.findByIdAndUpdate(request.params.id, {$set: {
+        nombre:request.body.nombre,
+        nick:request.body.nick,
+        password:request.body.password,
+        email:request.body.email,
+        telefono:request.body.telefono,
+        fechaNacimiento:request.body.fechaNacimiento,
+        avatar:request.file?.filename,
+        lat:request.body.lat,
+        lng:request.body.lng,
+        direccion:request.body.direccion,
+        rol:request.body.rol,
+        valoracion:request.body.valoracion
+        }}, {new:true})
+    .then(result =>{
+        
+        if(result)
+        {
+            response.status(200).send({ok:true, usuario:result});
+        }
+        else
+        {
+            response.status(400).send({ok:false, error: 'Error actualizando el usuario.'});
+        }
+    }).catch(error =>{
+        response.status(500).send({ok:false, error: 'INTERNAL SERVER ERROR. 500'});
+    });
+})
 
 //DELETE
 router.delete('/:id', (request, response) =>{

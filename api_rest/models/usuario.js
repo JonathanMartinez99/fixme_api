@@ -43,6 +43,10 @@ let userSchema = new mongoose.Schema({
         required:true,
         type:Number
     },
+    direccion:{
+        type:String,
+        required:true
+    },
     rol:{
         required:true,
         type:String,
