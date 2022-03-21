@@ -6,12 +6,6 @@ let userSchema = new mongoose.Schema({
         type:String,
         minlength:2
     },
-    nick:{
-        required:true,
-        type:String,
-        minlength:2,
-        unique:true
-    },
     email:{
         required:true,
         type:String,
@@ -45,7 +39,7 @@ let userSchema = new mongoose.Schema({
     },
     direccion:{
         type:String,
-        required:true
+        required:false
     },
     rol:{
         required:true,

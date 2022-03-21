@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const jwt = require('jsonwebtoken');
 const sha256 = require("crypto-js/sha256");
+let tokenGenerado = '';
 
 let router = express.Router();
 
@@ -19,9 +20,11 @@ let storage = multer.diskStorage({
 let upload = multer({storage: storage});
 
 const secreto = "secretoNode";
-let generarToken = nick => {
- return jwt.sign({nick: nick}, secreto,
- {expiresIn: "2 hours"});
+let generarToken = email => {
+    tokenGenerado = jwt.sign({email: email}, secreto,
+    {expiresIn: "2 hours"});
+
+    return tokenGenerado;
 };
 
 
@@ -67,34 +70,40 @@ router.get('/nick/:nick', (request, response) =>{
     })
 })
 
+/** Validador token */
+router.get('/validate/:token', (request, response) =>{
+    if(request.params.token === tokenGenerado){
+        response.status(200).send({ok:true});
+    }else{
+        response.status(400).send({ok:false});
+    }
+});
 
 //POST
 
 router.post('/login', (request, response) =>{
-    let nick = request.body.nick;
+    let email = request.body.email;
     let pass = sha256(request.body.password).toString();
 
-    Usuario.find({nick: nick, password:pass}).then( resultado =>{
+    Usuario.find({email: email, password:pass}).then( resultado =>{
         if(resultado.length > 0){
-            response.status(200).send({ok: true, token: generarToken(nick)});
+            response.status(200).send({ok: true, token: generarToken(email)});
         }else{
-            response.status(401).send({ok: false, error:'Usuario incorrecto.'});
+            response.status(401).send({ok: false, error:'Las credenciales son incorrectas.'});
         }
     }).catch(error =>{
         response.status(500).send({ok: false, error:'Error de servidor 500'});
     })
 });
 
-router.post('/registro', upload.single('avatar'), (request, response) =>{
+router.post('/registro', (request, response) =>{
     let usuario = new Usuario({
         nombre:request.body.nombre,
-        nick:request.body.nick,
         email:request.body.email,
         password: sha256(request.body.password),
         fechaNacimiento:request.body.fechaNacimiento,
         lat:request.body.lat,
-        lng:request.body.lng,
-        avatar:request.file?.filename
+        lng:request.body.lng
     });
 
     usuario.save().then(resultado =>{
@@ -110,8 +119,7 @@ router.put('/:id', upload.single('avatar'), (request, response) =>{
 
     Usuario.findByIdAndUpdate(request.params.id, {$set: {
         nombre:request.body.nombre,
-        nick:request.body.nick,
-        password:request.body.password,
+        password:sha256(request.body.password),
         email:request.body.email,
         telefono:request.body.telefono,
         fechaNacimiento:request.body.fechaNacimiento,
@@ -140,8 +148,7 @@ router.put('/admin/:id', upload.single('avatar'), (request, response) =>{
 
     Usuario.findByIdAndUpdate(request.params.id, {$set: {
         nombre:request.body.nombre,
-        nick:request.body.nick,
-        password:request.body.password,
+        password:sha256(request.body.password),
         email:request.body.email,
         telefono:request.body.telefono,
         fechaNacimiento:request.body.fechaNacimiento,

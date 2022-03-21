@@ -139,7 +139,7 @@ router.delete('/:id', (request, response) =>{
             response.status(200).send({ok:true, producto:result});
         }
         else{
-            response.status(400).send({ok:false, error:'No se ha podido eliminar la película.'})
+            response.status(400).send({ok:false, error:'No se ha podido eliminar el producto.'})
         }
     }).catch(error =>{
         response.status(500).send({ok:false, error:'INTERNAL SERVER ERROR. 500'});
