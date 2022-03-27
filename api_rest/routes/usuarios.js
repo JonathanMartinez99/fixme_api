@@ -2,7 +2,6 @@ const express = require('express');
 const multer = require('multer');
 const jwt = require('jsonwebtoken');
 const sha256 = require("crypto-js/sha256");
-let tokenGenerado = '';
 
 let router = express.Router();
 
@@ -21,10 +20,9 @@ let upload = multer({storage: storage});
 
 const secreto = "secretoNode";
 let generarToken = email => {
-    tokenGenerado = jwt.sign({email: email}, secreto,
+    return jwt.sign({email: email}, secreto,
     {expiresIn: "2 hours"});
 
-    return tokenGenerado;
 };
 
 
@@ -43,6 +41,21 @@ router.get('/', (request, response) =>{
         response.status(500).send({ok:false, error:'Error de servidor 500'})
     })
 });
+
+/** GET ME */
+router.get('/me/:token', (request, response) => {
+    let email = jwt.verify(request.params.token,secreto).email;
+    Usuario.findOne({email:email}).then(resultado =>{
+        if(resultado){
+            response.status(200).send({ok:true, usuario:resultado});
+        }
+        else{
+            response.status(400).send({ok:false, error:'No se ha encontrado al usuario.'});
+        }
+    }).catch(error =>{
+        response.status(500).send({ok:false, error:'Error de servidor 500.'})
+    })
+})
 
 /** Usuario por id */
 router.get('/:id', (request, response) =>{
@@ -72,10 +85,10 @@ router.get('/nick/:nick', (request, response) =>{
 
 /** Validador token */
 router.get('/validate/:token', (request, response) =>{
-    if(request.params.token === tokenGenerado){
+    if(jwt.verify(request.params.token,secreto)){
         response.status(200).send({ok:true});
     }else{
-        response.status(400).send({ok:false});
+        response.status(403).send({ok:false});
     }
 });
 

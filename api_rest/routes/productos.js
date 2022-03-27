@@ -68,6 +68,7 @@ router.post('/', upload.array('imagen', 5), (request, response) =>{
         descripcion: request.body.descripcion,
         usuario: request.body.usuario,
         categoria: request.body.categoria,
+        reparado: request.body.reparado,
         imagen:request.file?.filename
     });
 
@@ -115,7 +116,8 @@ router.put('/admin/:id', upload.array('imagen', 5), (request, response) =>{
         categoria:request.body.categoria,
         likes:request.body.likes,
         vistas:request.body.vistas,
-        imagen:request.file?.filename
+        imagen:request.file?.filename,
+        reparado:request.body.reparado
         }}, {new:true})
     .populate('usuario').then(result =>{
         

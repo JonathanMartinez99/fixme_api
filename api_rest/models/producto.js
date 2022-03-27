@@ -37,6 +37,11 @@ let productSchema = new mongoose.Schema({
     imagen:{
         required:true,
         type:[String]
+    },
+    reparado:{
+        required:true,
+        type:Boolean,
+        default:false
     }
 });
 
