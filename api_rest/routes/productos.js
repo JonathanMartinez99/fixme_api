@@ -4,6 +4,7 @@ const multer = require('multer');
 let router = express.Router();
 
 let Producto = require(__dirname + '/../models/producto.js');
+let Categoria = require(__dirname + '/../models/categoria.js');
 
 let storage = multer.diskStorage({
     destination: function (request, file, cb) {
@@ -61,7 +62,7 @@ router.get('/categoria/:categoria', (request, response) =>{
 
 //POST
 
-router.post('/', upload.array('imagen', 5), (request, response) =>{
+router.post('/', (request, response) =>{
     let producto = new Producto({
         nombre: request.body.nombre,
         precio: request.body.precio,
@@ -69,11 +70,13 @@ router.post('/', upload.array('imagen', 5), (request, response) =>{
         usuario: request.body.usuario,
         categoria: request.body.categoria,
         reparado: request.body.reparado,
-        imagen:request.file?.filename
+        imagen: request.body.imagen
     });
 
     producto.save().then(resultado =>{
-        response.status(200).send({ok:true, producto:resultado});
+        if(resultado){
+            response.status(200).send({ok:true, producto:resultado});
+        }
     }).catch(error =>{
         response.status(500).send({ok:false, error:'INTERNAL SERVER ERROR. 500'})
     })
