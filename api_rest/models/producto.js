@@ -42,6 +42,11 @@ let productSchema = new mongoose.Schema({
         required:true,
         type:Boolean,
         default:false
+    },
+    fecha:{
+        required:true,
+        type:Date,
+        default: Date.now()
     }
 });
 

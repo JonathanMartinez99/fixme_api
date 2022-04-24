@@ -6,6 +6,8 @@ const sha256 = require("crypto-js/sha256");
 let router = express.Router();
 
 let Usuario = require(__dirname + '/../models/usuario.js');
+let Producto = require(__dirname + '/../models/producto.js');
+
 
 let storage = multer.diskStorage({
     destination: function (request, file, cb) {
@@ -30,7 +32,7 @@ let generarToken = email => {
 
 /** Todos los usuarios */
 router.get('/', (request, response) =>{
-    Usuario.find().then( resultado => {
+    Usuario.find().populate('favoritos').then( resultado => {
 
         if(resultado.length > 0){
             response.status(200).send({ok:true, usuarios:resultado});
@@ -45,7 +47,7 @@ router.get('/', (request, response) =>{
 /** GET ME */
 router.get('/me/:token', (request, response) => {
     let email = jwt.verify(request.params.token,secreto).email;
-    Usuario.findOne({email:email}).then(resultado =>{
+    Usuario.findOne({email:email}).populate('favoritos').populate('productos').then(resultado =>{
         if(resultado){
             response.status(200).send({ok:true, usuario:resultado});
         }
@@ -59,7 +61,7 @@ router.get('/me/:token', (request, response) => {
 
 /** Usuario por id */
 router.get('/:id', (request, response) =>{
-    Usuario.findById(request.params.id).then(resultado =>{
+    Usuario.findById(request.params.id).populate('favoritos').populate('productos').then(resultado =>{
         if(resultado){
             response.status(200).send({ok:true, usuario:resultado});
         }else{
@@ -72,7 +74,7 @@ router.get('/:id', (request, response) =>{
 
 /** Usuario por nick */
 router.get('/nick/:nick', (request, response) =>{
-    Usuario.find({nick:request.params.nick}).then(resultado =>{
+    Usuario.find({nick:request.params.nick}).populate('favoritos').then(resultado =>{
         if(resultado.length > 0){
             response.status(200).send({ok:true, usuario:resultado});
         }else{
@@ -128,18 +130,55 @@ router.post('/registro', (request, response) =>{
 
 //PUT
 /** Modificar por id, usuario NORMAL */
-router.put('/:id', upload.single('avatar'), (request, response) =>{
+router.put('/:id', (request, response) =>{
+    
+    Usuario.findByIdAndUpdate(request.params.id, {$set: {
+        nombre: request.body.usuario.nombre,
+        email: request.body.usuario.email,
+        fechaNacimiento: request.body.usuario.fechaNacimiento,
+        }}, {new:true})
+    .then(result =>{
+        
+        if(result)
+        {
+            response.status(200).send({ok:true, usuario:result});
+        }
+        else
+        {
+            response.status(400).send({ok:false, error: 'Error actualizando el usuario.'});
+        }
+    }).catch(error =>{
+        response.status(500).send({ok:false, error: 'INTERNAL SERVER ERROR. 500'});
+    });
+})
+
+/** Modificar por id, contraseña */
+router.put('/password/:id', (request, response) =>{
+
+    let updatedPass = sha256(request.body.password);
+    Usuario.findByIdAndUpdate(request.params.id, {$set: {
+        password: updatedPass.toString()
+        }}, {new:true})
+    .then(result =>{
+        
+        if(result)
+        {
+            response.status(200).send({ok:true, usuario:result});
+        }
+        else
+        {
+            response.status(400).send({ok:false, error: 'Error actualizando el usuario.'});
+        }
+    }).catch(error =>{
+        response.status(500).send({ok:false, error: 'INTERNAL SERVER ERROR. 500'});
+    });
+})
+
+/** Modificar por id, avatar */
+router.put('/avatar/:id', (request, response) =>{
 
     Usuario.findByIdAndUpdate(request.params.id, {$set: {
-        nombre:request.body.nombre,
-        password:sha256(request.body.password),
-        email:request.body.email,
-        telefono:request.body.telefono,
-        fechaNacimiento:request.body.fechaNacimiento,
-        avatar:request.file?.filename,
-        lat:request.body.lat,
-        lng:request.body.lng,
-        direccion:request.body.direccion
+        avatar: request.body.avatar
         }}, {new:true})
     .then(result =>{
         
@@ -183,6 +222,90 @@ router.put('/admin/:id', upload.single('avatar'), (request, response) =>{
             response.status(400).send({ok:false, error: 'Error actualizando el usuario.'});
         }
     }).catch(error =>{
+        response.status(500).send({ok:false, error: 'INTERNAL SERVER ERROR. 500'});
+    });
+})
+
+/** Añadir su producto al usuario */
+
+// router.put('/producto/:id', (request, response) =>{
+
+//     Usuario.findByIdAndUpdate(request.params.id, {$addToSet: {
+//         productos:request.body.producto,
+//         }}, {new:true}).populate('productos')
+//     .then(result =>{
+        
+//         if(result)
+//         {
+//             response.status(200).send({ok:true, producto: result.productos[0]});
+//         }
+//         else
+//         {
+//             response.status(400).send({ok:false, error: 'Error actualizando el usuario.'});
+//         }
+//     }).catch(error =>{
+//         console.log(error);
+//         response.status(500).send({ok:false, error: 'INTERNAL SERVER ERROR. 500'});
+//     });
+// })
+
+/** Añadir a favoritos */
+
+router.put('/favorito/:id', (request, response) =>{
+
+    Usuario.findByIdAndUpdate(request.params.id, {$addToSet: {
+        favoritos:request.body.producto,
+        }}, {new:true}).populate('favoritos')
+    .then(result =>{
+        
+        if(result)
+        {
+            Producto.findByIdAndUpdate(request.body.producto._id, { $set: {
+                likes: request.body.producto.likes + 1
+            }}, {new:true}).populate('usuario').then(result2 => {
+                if(result2){
+                    response.status(200).send({ok:true, producto: result2});
+                }else{
+                    response.status(400).send({ok:false, error: 'Error añadiendo el like al producto.'});
+                }
+            })
+        }
+        else
+        {
+            response.status(400).send({ok:false, error: 'Error actualizando el usuario.'});
+        }
+    }).catch(error =>{
+        console.log(error);
+        response.status(500).send({ok:false, error: 'INTERNAL SERVER ERROR. 500'});
+    });
+})
+
+/** Quitar de favoritos */
+
+router.put('/favorito/delete/:id', (request, response) =>{
+    Usuario.findByIdAndUpdate(request.params.id, {$pull: {
+        favoritos:request.body.producto._id,
+        }}, {new:true}).populate('favoritos')
+    .then(result =>{
+        
+        if(result)
+        {
+            Producto.findByIdAndUpdate(request.body.producto._id, { $set: {
+                likes: request.body.producto.likes -1
+            }}, {new:true}).populate('usuario').then(result2 => {
+                if(result2){
+                    response.status(200).send({ok:true, producto: result2});
+                }else{
+                    response.status(400).send({ok:false, error: 'Error quitando el like al producto.'});
+                }
+            })
+        }
+        else
+        {
+            response.status(400).send({ok:false, error: 'Error actualizando el usuario.'});
+        }
+    }).catch(error =>{
+        console.log(error);
         response.status(500).send({ok:false, error: 'INTERNAL SERVER ERROR. 500'});
     });
 })
