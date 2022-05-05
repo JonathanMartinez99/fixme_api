@@ -16,6 +16,12 @@ let userSchema = new mongoose.Schema({
         type:String,
         minlength:8
     },
+    cash:{
+        required: false,
+        default: 0,
+        min:0,
+        type: Number
+    },
     telefono:{
         required:false,
         type:String
@@ -52,10 +58,17 @@ let userSchema = new mongoose.Schema({
         enum:['admin','user'],
         default:'user'
     },
+    numValoraciones:{
+        required: false,
+        type: Number,
+        default: 0,
+        min: 0
+    },
     valoracion:{
         required:false,
         type:Number,
-        default:0
+        default:0,
+        min:0
     },
     productos:{
         required:false,
