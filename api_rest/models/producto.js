@@ -47,6 +47,11 @@ let productSchema = new mongoose.Schema({
         required:true,
         type:Date,
         default: Date.now()
+    },
+    vendido:{
+        required: false,
+        type:Boolean,
+        default: false
     }
 });
 

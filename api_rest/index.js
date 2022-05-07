@@ -6,7 +6,7 @@ const cors = require('cors');
 const productRouter = require(__dirname + '/routes/productos');
 const userRouter = require(__dirname + '/routes/usuarios');
 const categoriaRouter = require(__dirname + '/routes/categorias');
-
+const compraRouter = require(__dirname + '/routes/compras');
 
 //conexión bbdd
 mongoose.connect('mongodb://localhost:27017/fixme');
@@ -20,5 +20,6 @@ app.use(cors());
 app.use('/productos', productRouter);
 app.use('/usuarios', userRouter);
 app.use('/categorias', categoriaRouter);
+app.use('/compras', compraRouter);
 
 app.listen(8080);

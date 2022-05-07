@@ -19,10 +19,10 @@ let upload = multer({storage: storage});
 
 //GET
 
-/** Todos los productos sin reparar */
+/** Todos los productos */
 router.get('/', (request, response) =>{
-    Producto.find({reparado:false}).populate('usuario').then(result => {
-        if(result.length > 0){
+    Producto.find().populate('usuario').then(result => {
+        if(result.length >= 0){
             response.status(200).send({ok:true, productos:result});
         }
         else{
@@ -129,6 +129,28 @@ router.put('/vistas/:id', (request, response) =>{
 
     Producto.findByIdAndUpdate(request.params.id, {$set: {
         vistas: request.body.producto.vistas + 1
+        }}, {new:true})
+    .populate('usuario').then(result =>{
+        
+        if(result)
+        {
+            response.status(200).send({ok:true, producto:result});
+        }
+        else
+        {
+            response.status(400).send({ok:false, error: 'Error actualizando el producto.'});
+        }
+    }).catch(error =>{
+        response.status(500).send({ok:false, error: 'INTERNAL SERVER ERROR. 500'});
+    });
+})
+
+/** AÑADIR VENDIDO */
+
+router.put('/vendido/:id', (request, response) =>{
+
+    Producto.findByIdAndUpdate(request.params.id, {$set: {
+        vendido: true
         }}, {new:true})
     .populate('usuario').then(result =>{
         
