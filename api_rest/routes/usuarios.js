@@ -226,28 +226,52 @@ router.put('/admin/:id', upload.single('avatar'), (request, response) =>{
     });
 })
 
-/** Añadir su producto al usuario */
+/** Añadir saldo al usuario */
 
-// router.put('/producto/:id', (request, response) =>{
+router.put('/cash/:id', (request, response) =>{
 
-//     Usuario.findByIdAndUpdate(request.params.id, {$addToSet: {
-//         productos:request.body.producto,
-//         }}, {new:true}).populate('productos')
-//     .then(result =>{
+    Usuario.findByIdAndUpdate(request.params.id, {$set: {
+        cash: request.body.usuario.cash + request.body.dinero,
+        }}, {new:true})
+    .then(result =>{
         
-//         if(result)
-//         {
-//             response.status(200).send({ok:true, producto: result.productos[0]});
-//         }
-//         else
-//         {
-//             response.status(400).send({ok:false, error: 'Error actualizando el usuario.'});
-//         }
-//     }).catch(error =>{
-//         console.log(error);
-//         response.status(500).send({ok:false, error: 'INTERNAL SERVER ERROR. 500'});
-//     });
-// })
+        if(result)
+        {
+            response.status(200).send({ok:true, usuario: result});
+        }
+        else
+        {
+            response.status(400).send({ok:false, error: 'Error actualizando el usuario.'});
+        }
+    }).catch(error =>{
+        console.log(error);
+        response.status(500).send({ok:false, error: 'INTERNAL SERVER ERROR. 500'});
+    });
+});
+
+
+/** Quitar saldo al usuario */
+
+router.put('/compra/cash/:id', (request, response) =>{
+
+    Usuario.findByIdAndUpdate(request.params.id, {$set: {
+        cash: request.body.usuario.cash - request.body.dinero,
+        }}, {new:true})
+    .then(result =>{
+        
+        if(result)
+        {
+            response.status(200).send({ok:true, usuario: result});
+        }
+        else
+        {
+            response.status(400).send({ok:false, error: 'Error actualizando el usuario.'});
+        }
+    }).catch(error =>{
+        console.log(error);
+        response.status(500).send({ok:false, error: 'INTERNAL SERVER ERROR. 500'});
+    });
+})
 
 /** Añadir a favoritos */
 
