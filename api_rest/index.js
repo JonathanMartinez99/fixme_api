@@ -7,6 +7,7 @@ const productRouter = require(__dirname + '/routes/productos');
 const userRouter = require(__dirname + '/routes/usuarios');
 const categoriaRouter = require(__dirname + '/routes/categorias');
 const compraRouter = require(__dirname + '/routes/compras');
+const notificacionRouter = require(__dirname + '/routes/notificaciones');
 
 //conexión bbdd
 mongoose.connect('mongodb://localhost:27017/fixme');
@@ -21,5 +22,6 @@ app.use('/productos', productRouter);
 app.use('/usuarios', userRouter);
 app.use('/categorias', categoriaRouter);
 app.use('/compras', compraRouter);
+app.use('/notificaciones', notificacionRouter);
 
 app.listen(8080);
