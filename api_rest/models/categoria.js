@@ -15,6 +15,11 @@ let categoriaSchema = new mongoose.Schema({
         default:0,
         required:true,
         type: Number
+    },
+    numReparados:{
+        default:0,
+        required:true,
+        type: Number
     }
 })
 
