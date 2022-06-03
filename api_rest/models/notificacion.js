@@ -22,9 +22,14 @@ let notificacionSchema = new mongoose.Schema({
         ref:'usuarios'
     },
     producto:{
-        required: true,
+        required: false,
         type:mongoose.Schema.Types.ObjectId,
         ref:'productos'
+    },
+    chat:{
+        required: false,
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'usuarios'
     }
 })
 

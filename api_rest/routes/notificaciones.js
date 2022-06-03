@@ -8,7 +8,7 @@ let Notificacion = require(__dirname + '/../models/notificacion.js');
 
 /** Todos las notificaciones */
 router.get('/:usuario', (request, response) =>{
-    Notificacion.find({usuario:request.params.usuario}).populate('producto').then(result => {
+    Notificacion.find({usuario:request.params.usuario}).populate('producto').populate('chat').then(result => {
         if(result.length > 0){
             response.status(200).send({ok:true, notificaciones:result});
         }
@@ -27,7 +27,8 @@ router.post('/', (request, response) =>{
         info: request.body.notificacion.info,
         title: request.body.notificacion.title,
         usuario: request.body.notificacion.usuario,
-        producto: request.body.notificacion.producto
+        producto: request.body.notificacion.producto,
+        chat: request.body.notificacion.chat
     });
     notif.save().then(resultado =>{
         if(resultado){
