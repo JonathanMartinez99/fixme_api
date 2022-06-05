@@ -229,3 +229,75 @@ let p11 = new Producto({
     "__v" : 0
 });  
 p11.save();
+
+let a1 = new Producto({
+    "nombre" : "ZGuitarra 1",
+    "precio" : 59,
+    "descripcion" : "La guitarra tenía el mástil partido, ahora está totalmente reparada",
+    "usuario" : "629ba8f0cc6cb33fb59bac5d",
+    "categoria" : "Arte y Música",
+    "likes" : 0,
+    "vistas" : 0,
+    "imagen" : [ 
+        getBase64('guitarreparada.jpg')
+    ],
+    "reparado" : false,
+    "fecha" : "2022-06-04T18:40:11.491Z",
+    "vendido" : false,
+    "__v" : 0
+});  
+a1.save();
+
+let a2 = new Producto({
+    "nombre" : "ZGuitarra 2",
+    "precio" : 59,
+    "descripcion" : "La guitarra tenía el mástil partido, ahora está totalmente reparada",
+    "usuario" : "629ba8f0cc6cb33fb59bac5d",
+    "categoria" : "Arte y Música",
+    "likes" : 0,
+    "vistas" : 0,
+    "imagen" : [ 
+        getBase64('guitar3.jpg')
+    ],
+    "reparado" : false,
+    "fecha" : "2022-06-04T18:40:11.491Z",
+    "vendido" : false,
+    "__v" : 0
+});  
+a2.save();
+
+let a3 = new Producto({
+    "nombre" : "ZGuitarra 3",
+    "precio" : 59,
+    "descripcion" : "La guitarra tenía el mástil partido, ahora está totalmente reparada",
+    "usuario" : "629ba8f0cc6cb33fb59bac5d",
+    "categoria" : "Arte y Música",
+    "likes" : 0,
+    "vistas" : 0,
+    "imagen" : [ 
+        getBase64('guitar1.jpg')
+    ],
+    "reparado" : false,
+    "fecha" : "2022-06-04T18:40:11.491Z",
+    "vendido" : false,
+    "__v" : 0
+});  
+a3.save();
+
+let a4 = new Producto({
+    "nombre" : "ZGuitarra 4",
+    "precio" : 59,
+    "descripcion" : "La guitarra tenía el mástil partido, ahora está totalmente reparada",
+    "usuario" : "629ba8f0cc6cb33fb59bac5d",
+    "categoria" : "Arte y Música",
+    "likes" : 0,
+    "vistas" : 0,
+    "imagen" : [ 
+        getBase64('guitar2.jpg')
+    ],
+    "reparado" : false,
+    "fecha" : "2022-06-04T18:40:11.491Z",
+    "vendido" : false,
+    "__v" : 0
+});  
+a4.save();

@@ -14,7 +14,7 @@ let c1 = new Categoria({
     "_id" : "629ba6ec02afa5fdcef4ab1e",
     "nombre" : "Arte y Música",
     "descripcion" : "hola",
-    "numProductos" : 1,
+    "numProductos" : 5,
     "numReparados" : 1,
     "__v" : 0
 });
